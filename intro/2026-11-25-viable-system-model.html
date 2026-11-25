@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="nl"><head><meta charset="utf-8"><meta name="generator" content="openklap.py 1.6.0"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Viable System Model</title><style>
+:root{
+  --bg:#faf9f5; --panel:#ffffff; --panel-soft:#f2f0e9;
+  --ink:#1f1e1d; --ink-soft:#3d3929; --muted:#73716a;
+  --line:#e5e3da; --line-strong:#d4d1c5;
+  --accent:#c96442; --accent-soft:#f7ede7; --accent-ink:#9c4a2f;
+  --term:#B5502F; --link:#1a5fb4;
+  --ok:#2c7a52; --ok-bg:#e9f3ec;
+  --warn:#9a6a16; --warn-bg:#faf3e1;
+  --bad:#b23b3b; --bad-bg:#f9ebea;
+  --mono:ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
+  --sans:"Segoe UI",ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.62 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+a{color:var(--link)}
+h1{font-size:31px;font-weight:650;letter-spacing:-.012em;margin:.35em 0 .3em;line-height:1.25}
+header.cover{background:linear-gradient(180deg,#f6f4ec,var(--bg));border-bottom:1px solid var(--line);padding:40px 0 28px}
+.eyebrow{font-family:var(--mono);text-transform:uppercase;letter-spacing:.16em;font-size:11.5px;color:var(--accent-ink)}
+.lede{max-width:70ch;font-size:17px;color:var(--ink-soft);margin:.4em 0}
+.meta{font-size:13px;color:var(--muted);margin-top:.6em}
+main{padding-top:24px;padding-bottom:40px}
+.toc{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:14px 20px;margin-bottom:22px}
+.toc-h{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-ink);margin-bottom:6px}
+.toc ol{columns:2;column-gap:32px;margin:0;padding-left:1.3em}
+.toc li{margin:.15em 0;break-inside:avoid}
+details{border-radius:12px}
+summary{cursor:pointer;list-style:none;position:relative;padding-left:22px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸";position:absolute;left:2px;top:0;color:var(--accent);transition:transform .15s}
+details[open]>summary::before{transform:rotate(90deg)}
+@media (prefers-reduced-motion:reduce){summary::before{transition:none}}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+details.sec{background:var(--panel);border:1px solid var(--line);margin:0 0 14px;padding:14px 18px;scroll-margin-top:16px}
+details.sec[open]{border-left:3px solid var(--accent)}
+details.sec>summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+details.sec>summary::before{top:4px}
+details.sec>summary h2{font-size:19px;font-weight:620;margin:0;display:inline}
+.small{font-size:13px;color:var(--muted)}
+.nr{font-variant-numeric:tabular-nums;color:var(--accent-ink);margin-right:.2em}
+.sk{display:inline;font:inherit;margin:0}
+details.sec>.body{padding:10px 0 4px 22px}
+details.sub{background:var(--panel-soft);border:1px solid var(--line);margin:8px 0;padding:8px 14px}
+details.sub>summary{font-weight:560}
+details.sub>.body{padding:6px 0 2px 20px}
+details.sub details.sub{background:#f8f7f2}
+details.sub details.sub details.sub{background:var(--panel)}
+.body p{margin:.45em 0}
+.body ul{margin:.4em 0;padding-left:1.2em}
+.body li{margin:.35em 0}
+blockquote{margin:.5em 0;padding:8px 14px;border-left:3px solid var(--line-strong);background:var(--panel);border-radius:0 8px 8px 0;color:var(--ink-soft)}
+.vraag{background:var(--panel-soft);border-radius:10px;padding:8px 16px}
+.vraag p{margin:.45em 0}
+.vraag ul{margin:.2em 0 .4em;padding-left:1.4em}
+.vraag ul ul{list-style:circle}
+.vraag li{margin:.2em 0}
+.callout{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0;background:var(--accent-soft)}
+.callout .tag{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:650;color:var(--accent-ink)}
+.callout.ok{background:var(--ok-bg);border-color:#cfe5d6}.callout.ok .tag{color:var(--ok)}
+.callout.warn{background:var(--warn-bg);border-color:#efe0b8}.callout.warn .tag{color:var(--warn)}
+.callout.bad{background:var(--bad-bg);border-color:#efcfcc}.callout.bad .tag{color:var(--bad)}
+.pill{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:1px 10px;border:1px solid;white-space:nowrap}
+.pill.ok{color:var(--ok);background:var(--ok-bg);border-color:#bcdcc6}
+.pill.ok2{color:#3f7a2c;background:#eef5e4;border-color:#cfe3b9}
+.pill.warn{color:var(--warn);background:var(--warn-bg);border-color:#ead6a2}
+.pill.bad{color:var(--bad);background:var(--bad-bg);border-color:#e8c2bf}
+.pill.neutral{color:var(--muted);background:var(--panel-soft);border-color:var(--line-strong)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin:12px 0;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;vertical-align:top;padding:8px 12px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:var(--panel-soft);font-weight:600}
+code{background:var(--accent-soft);padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:.9em}
+footer{border-top:1px solid var(--line);padding:18px 0;color:var(--ink-soft);font-size:14px;scroll-margin-top:16px}
+footer h3{font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-ink);margin:.2em 0}
+#begrippen{margin:10px 0 80px}
+.fold-controls{position:fixed;right:16px;bottom:16px;display:flex;gap:6px;z-index:50}
+.fold-controls button{font:inherit;font-size:13px;background:var(--panel);border:1px solid var(--line-strong);border-radius:999px;padding:6px 12px;cursor:pointer;box-shadow:0 2px 8px rgba(31,30,29,.08)}
+.fold-controls button:hover{border-color:var(--accent)}
+.fold-controls button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:640px){.toc ol{columns:1}.wrap{padding:0 14px}details.sec>.body,details.sub>.body{padding-left:8px}h1{font-size:25px}}
+/* ── C4: begrippen, tooltip en popup (letterlijk) ── */
+.term{font:inherit;color:var(--term);text-decoration:underline dotted;text-decoration-thickness:1px;text-underline-offset:3px;cursor:help}
+.term:focus-visible{outline:2px solid var(--term);outline-offset:2px;border-radius:2px}
+.term-tip{position:absolute;z-index:100;display:none;max-width:340px;background:var(--panel);color:var(--ink);border:1px solid var(--line-strong);border-radius:10px;padding:10px 12px;box-shadow:0 6px 24px rgba(31,30,29,.12);font-size:14px;line-height:1.5}
+.term-tip.open{display:block}
+.term-tip p{margin:.3rem 0}
+.term-tip .kort{color:var(--ink-soft)}
+.voluit{color:var(--muted);font-weight:400}
+.meer-info,.naar-begrip{color:var(--link);background:none;border:0;padding:0;font:inherit;text-decoration:underline;cursor:pointer}
+dialog.term-dialog{width:min(640px,92vw);max-height:80vh;padding:0;border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);overflow:hidden}
+dialog.term-dialog::backdrop{background:rgba(31,30,29,.35)}
+.term-dialog .dlg-head{display:flex;justify-content:flex-end;padding:6px 10px;border-bottom:1px solid var(--line)}
+.term-dialog .dlg-close{background:none;border:0;font-size:18px;cursor:pointer;color:var(--muted)}
+.term-dialog .dlg-body{padding:18px 24px 22px;overflow-y:auto;max-height:calc(80vh - 48px)}
+.term-dialog h3{margin:0 0 .6rem}
+.term-dialog h4{margin:1rem 0 .2rem;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent-ink)}
+.term-dialog p{margin:.2rem 0}
+@media (prefers-reduced-motion:no-preference){.term-tip.open{animation:tipIn .12s ease-out}@keyframes tipIn{from{opacity:0}to{opacity:1}}}
+.begrip-item{border-left:3px solid var(--accent);scroll-margin-top:16px}
+.vk-lijst{margin:.2em 0 .9em;padding-left:1.2em}
+.vk-lijst li{margin:.35em 0;border-radius:6px}
+.naar-voorkomen{color:var(--link)}
+.vk-n,.vk-pad{color:var(--muted);font-size:13px}
+.term-dialog .vk-pad{margin-bottom:.15rem}
+@media (prefers-reduced-motion:no-preference){
+  .begrip-item.flash{animation:flashRand 1.8s ease-out}
+  .vk-lijst li.flash,.term.flash{animation:flashVlak 2.2s ease-out}
+  @keyframes flashRand{0%,30%{box-shadow:0 0 0 3px var(--term)}100%{box-shadow:0 0 0 3px transparent}}
+  @keyframes flashVlak{0%,40%{background:var(--accent-soft)}100%{background:transparent}}
+}
+@media (prefers-reduced-motion:reduce){.flash{outline:2px solid var(--term);outline-offset:2px}}
+</style></head><body>
+<header class="cover"><div class="wrap"><div class="eyebrow">Concept-intro · Organisatie &amp; sturing · 2026-11-25</div><h1>Viable System Model (VSM) — Stafford Beer</h1><p class="lede">Een organisatie blijft alleen levensvatbaar als vijf functies samen de complexiteit van haar omgeving aankunnen. Denk aan een referentiearchitectuur zoals <span class="term" tabindex="0" data-term="mora" data-context="Het anker: net als de MORA is dit een algemeen model dat je op je eigen organisatie legt.">MORA</span>, maar dan voor sturing in plaats van voor processen en informatie.</p><div class="meta">Concept-intro 1.0 · 25-11-2026 · bronnen: Beer, Espejo &amp; Gill, Hoverstadt, Metaphorum, TUM</div></div></header>
+<main class="wrap"><nav class="toc"><div class="toc-h">Inhoud</div><ol><li><a href="#s-vraag">De vraag</a></li><li><a href="#s-1">Kern</a></li><li><a href="#s-2">Herkomst</a></li><li><a href="#s-3">Variëteit</a></li><li><a href="#s-4">Vijf systemen</a></li><li><a href="#s-5">Spanning 3–4</a></li><li><a href="#s-6">Recursie</a></li><li><a href="#s-7">Autonomie en samenhang</a></li><li><a href="#s-8">Anker: referentiemodel</a></li><li><a href="#s-9">Voorbeeld: mbo-college</a></li><li><a href="#s-10">Diagnose</a></li><li><a href="#s-11">Architectuur en IT</a></li><li><a href="#s-12">Bij opdrachtgevers</a></li><li><a href="#s-13">Valkuilen en kritiek</a></li><li><a href="#s-14">Verder leren</a></li><li><a href="#bronnen">Bronnen</a></li><li><a href="#begrippen">Begrippen</a></li></ol></nav><details class="sec" open id="s-vraag"><summary><h2>De vraag</h2><span class="small">letterlijk zoals gesteld</span></summary><div class="body"><div class="vraag"><p>cintro viable systems model</p></div></div></details><details class="sec" open id="s-1"><summary><h2>Een organisatie is levensvatbaar als vijf functies, Systeem 1 tot en met 5, samen de complexiteit van haar omgeving aankunnen.</h2></summary><div class="body"><p>Het <span class="term" tabindex="0" data-term="vsm" data-context="Hier als naam van het model dat dit document uitlegt.">VSM</span> is een model van wat elke zelfstandige organisatie nodig heeft om te overleven: niet wie de baas is, maar welke functies er moeten zijn en hoe ze met elkaar praten.</p><div class="callout warn"><span class="tag">Let op de afkorting</span><p><span class="term" tabindex="0" data-term="vsm" data-context="De afkorting die tot verwarring leidt.">VSM</span> betekent hier <span class="term" tabindex="0" data-term="vsm" data-context="De afkorting die tot verwarring leidt.">Viable System Model</span>, niet <span class="term" tabindex="0" data-term="vsmap" data-context="De andere betekenis van VSM, die hier niet bedoeld is.">Value Stream Mapping</span> uit lean. Die afkorting komt in de praktijk ook veel voor.</p></div><details class="sub"><summary><span class="nr">1.1</span> <h3 class="sk">Levensvatbaar betekent: zelfstandig kunnen voortbestaan</h3></summary><div class="body"><p>Een levensvatbaar systeem kan overleven in een omgeving die verandert, ook als niemand van buitenaf ingrijpt. Een afdeling die alleen bestaat omdat het hoofdkantoor haar in stand houdt, is in deze zin niet zelfstandig levensvatbaar.</p><details class="sub"><summary><span class="nr">1.1.1</span> <h3 class="sk">Waarom aanpassingsvermogen het criterium is</h3></summary><div class="body"><p>Overleven in een stabiele omgeving is makkelijk. Het model gaat over organisaties die zich moeten aanpassen zonder hun identiteit te verliezen. Daarom staan zowel 'nu efficiënt werken' als 'op tijd veranderen' erin.</p></div></details></div></details><details class="sub"><summary><span class="nr">1.2</span> <h3 class="sk">Functies, geen afdelingen</h3></summary><div class="body"><p>De vijf systemen zijn functies. Eén persoon kan meerdere functies vervullen, en één functie kan over meerdere afdelingen verspreid zijn. Je kijkt dus niet naar het organogram, maar naar wat er gebeurt.</p><p>Ontbreekt een functie, dan ontstaan voorspelbare problemen. Dat maakt het model geschikt voor diagnose.</p></div></details></div></details><details class="sec" id="s-2"><summary><h2>Stafford Beer leidde het model af uit de <span class="term" tabindex="0" data-term="cybernetica" data-context="De wetenschap waaruit Beer het model afleidde.">cybernetica</span> en het menselijk zenuwstelsel, na dertig jaar observatie van organisaties.</h2></summary><div class="body"><p>Beer was een Britse managementconsultant. Hij zocht naar wat alle overlevende systemen gemeen hebben, van een cel tot een land.</p><details class="sub"><summary><span class="nr">2.1</span> <h3 class="sk">Drie boeken vormen de kern</h3></summary><div class="body"><ul><li>Brain of the Firm (1972): het model, afgeleid uit het zenuwstelsel.</li><li>The Heart of Enterprise (1979): het model opnieuw opgebouwd vanuit logica, zonder biologie.</li><li>Diagnosing the System for Organizations (1985): het praktische handboek voor diagnose.</li></ul></div></details><details class="sub"><summary><span class="nr">2.2</span> <h3 class="sk">Het zenuwstelsel als inspiratie, niet als metafoor</h3></summary><div class="body"><p>Beers claim is sterker dan 'een organisatie lijkt op een lichaam'. Hij stelt dat elke zelfstandige organisatie dezelfde functionele eisen heeft (regelen, coördineren, vooruitkijken, identiteit bewaren), en dat daar dus dezelfde structurele oplossing bij hoort.</p></div></details><details class="sub"><summary><span class="nr">2.3</span> <h3 class="sk">Bekendste toepassing: Chili, 1971–1973</h3></summary><div class="body"><p>In het project <span class="term" tabindex="0" data-term="cybersyn" data-context="Het Chileense project waarin het model op landelijke schaal werd toegepast.">Cybersyn</span> wilde Beer de genationaliseerde industrie van Chili sturen met het model en dagelijkse productiecijfers. Het project stopte na de staatsgreep van 1973. Het geeft het model tot vandaag een politieke bijklank.</p></div></details></div></details><details class="sec" id="s-3"><summary><h2>Het fundament is de <span class="term" tabindex="0" data-term="wet-van-ashby" data-context="De wet waarop het hele model rust.">wet van Ashby</span>: alleen <span class="term" tabindex="0" data-term="variteit" data-context="Hier tweemaal: de complexiteit van wat geregeld moet worden en van de regelaar zelf.">variëteit</span> kan <span class="term" tabindex="0" data-term="variteit" data-context="Hier tweemaal: de complexiteit van wat geregeld moet worden en van de regelaar zelf.">variëteit</span> beheersen, dus sturen is filteren en versterken.</h2></summary><div class="body"><p>De omgeving is altijd complexer dan de organisatie, en de organisatie is complexer dan haar management. Geen manager kan alles weten. Het model gaat over hoe je dat gat overbrugt.</p><style>
+.dgwrap{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:12px;background:#fdfcf9}
+svg.dg{display:block;width:100%;min-width:680px;height:auto;font-family:var(--sans)}
+svg.dg .nd{fill:#fff;stroke:#d4d1c5;stroke-width:1.2}
+svg.dg .nd.kern{stroke:#c96442;stroke-width:1.8}
+svg.dg .nd.anker{fill:#f6f5f0;stroke-dasharray:4 3}
+svg.dg .nd.accent{fill:#f7ede7;stroke:#c96442}
+svg.dg .vis{fill:none;stroke-linecap:round}
+svg.dg .hit{fill:none;stroke:transparent;stroke-width:14;pointer-events:stroke}
+svg.dg .el{cursor:pointer;transition:opacity .12s}
+svg.dg .el:focus{outline:none}
+svg.dg .el:focus-visible .nd,svg.dg .el:focus-visible .vis{filter:drop-shadow(0 0 2px #1a5fb4)}
+svg.dg.focus .el:not(.hl){opacity:.13}
+svg.dg .colh{font-size:10.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;fill:#9c4a2f}
+svg.dg .nt{font-size:13px;font-weight:650;fill:#1f1e1d}
+svg.dg .nm,.dg-leg .nm{font-size:11px;fill:#5f5d55}
+svg.dg .elab{font-size:10.5px;fill:#5f5d55;text-anchor:middle;paint-order:stroke;stroke:#fdfcf9;stroke-width:4px}
+svg.dg .bdg{font-size:10.5px;font-weight:700;fill:#fff;text-anchor:middle;pointer-events:none}
+.dg-leg{display:block;width:100%;max-width:640px;height:auto;margin:6px 0 4px;font-family:var(--sans)}
+.dg-tip{position:absolute;z-index:120;display:none;max-width:420px;background:var(--panel);color:var(--ink);border:1px solid var(--line-strong);border-radius:10px;padding:10px 13px;box-shadow:0 8px 28px rgba(31,30,29,.16);font-size:13.5px;line-height:1.5}
+.dg-tip.open{display:block}.dg-tip strong{display:block;margin-bottom:4px}.dg-tip p{margin:.25rem 0}
+.dg-tip .dg-hint{color:var(--muted);font-size:11.5px;margin-top:6px}
+.leesvb{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:8px 14px;margin:8px 0}
+.leesvb h4{margin:.2rem 0 .3rem;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent-ink)}
+.leesvb ul{list-style:none;padding-left:0}.leesvb li{padding-left:26px;position:relative;margin:.35em 0}
+.bdg-i{position:absolute;left:0;top:3px;width:18px;height:18px;border-radius:50%;color:#fff;font-size:11px;font-weight:700;text-align:center;line-height:18px}
+</style><script>
+(function () {
+  const ent = {'&': '&amp;', '<': '&lt;', '>': '&gt;'};
+  const esc = s => String(s ?? '').replace(/[&<>]/g, c => ent[c]);
+  const tip = document.createElement('div');
+  tip.className = 'dg-tip'; tip.setAttribute('role', 'tooltip'); document.body.appendChild(tip);
+  let pinned = null; const sel = 'svg.dg .el';
+  function fill(el) {
+    const ps = (el.dataset.tb || '').split(' | ').filter(Boolean);
+    tip.innerHTML = '<strong>' + esc(el.dataset.tt) + '</strong>' + ps.map(p => '<p>' + esc(p) + '</p>').join('') +
+      '<p class=dg-hint>' + (pinned ? 'vastgezet · Esc of klik ernaast om te sluiten' : 'klik om vast te zetten') + '</p>';
+  }
+  function place(x, y) {
+    const r = tip.getBoundingClientRect(); let l = x + 16, t = y + 16;
+    if (l + r.width > innerWidth - 8) l = Math.max(8, x - r.width - 16);
+    if (t + r.height > innerHeight - 8) t = Math.max(8, y - r.height - 16);
+    tip.style.left = l + scrollX + 'px'; tip.style.top = t + scrollY + 'px';
+  }
+  function clearAll() { document.querySelectorAll('svg.dg.focus').forEach(s => { s.classList.remove('focus'); s.querySelectorAll('.el.hl').forEach(x => x.classList.remove('hl')); }); }
+  function highlight(el) {
+    clearAll(); const svg = el.closest('svg.dg'); const h = (el.dataset.h || '').split(' ').filter(Boolean); if (!svg || !h.length) return;
+    svg.classList.add('focus');
+    svg.querySelectorAll('.el').forEach(x => { const g = (x.dataset.g || '').split(' '); if (x === el || h.some(k => g.includes(k))) x.classList.add('hl'); });
+  }
+  function show(el, x, y) { fill(el); tip.classList.add('open'); place(x, y); highlight(el); }
+  function hide() { tip.classList.remove('open'); clearAll(); }
+  const at = el => { const r = el.getBoundingClientRect(); return [r.left + 10, r.bottom - 6]; };
+  document.addEventListener('pointerover', e => { if (pinned || e.pointerType === 'touch') return; const el = e.target.closest(sel); if (el) show(el, e.clientX, e.clientY); });
+  document.addEventListener('pointermove', e => { if (pinned) return; const el = e.target.closest(sel); if (el && tip.classList.contains('open')) place(e.clientX, e.clientY); });
+  document.addEventListener('pointerout', e => { if (pinned) return; const el = e.target.closest(sel); if (el && !e.relatedTarget?.closest?.(sel)) hide(); });
+  document.addEventListener('click', e => {
+    const el = e.target.closest(sel);
+    if (el) { pinned = el; show(el, e.clientX, e.clientY); return; }
+    if (pinned && !e.target.closest('.dg-tip')) { pinned = null; hide(); }
+  });
+  document.addEventListener('focusin', e => { const el = e.target.closest?.(sel); if (el && !pinned && el.matches(':focus-visible')) show(el, ...at(el)); });
+  document.addEventListener('focusout', e => { if (!pinned && e.target.closest?.(sel) && !e.relatedTarget?.closest?.(sel)) hide(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { pinned = null; hide(); return; }
+    const el = e.target.closest?.(sel);
+    if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pinned = el; show(el, ...at(el)); }
+  });
+})();
+</script><p class='small'>Beweeg over de blokken en lijnen voor uitleg; klik om de uitleg vast te zetten.</p><svg class='dg-leg' viewBox='0 0 640 86' role='img' aria-label='Legenda'><path d='M10,16 L60,16' stroke='#b23b3b' stroke-width='2.6' fill='none'/><text x='72' y='20' class='nm'>vermindert complexiteit (filter)</text><path d='M10,42 L60,42' stroke='#2c7a52' stroke-width='2.6' fill='none'/><text x='72' y='46' class='nm'>vergroot stuurvermogen (versterker)</text><path d='M10,68 L60,68' stroke='#73716a' stroke-width='2.6' fill='none'/><text x='72' y='72' class='nm'>informatie of druk</text></svg><div class='dgwrap'><svg class='dg' viewBox='0 0 1000 236' role='group' aria-label='Variëteit filteren en versterken'><defs><marker id='ah140636678456512' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='9' markerHeight='9' markerUnits='userSpaceOnUse' orient='auto-start-reverse'><path d='M0,0 L10,5 L0,10 z' fill='#73716a'/></marker></defs><text x='52' y='22' class='colh'>1 · omgeving</text><text x='385' y='22' class='colh'>2 · operatie</text><text x='718' y='22' class='colh'>3 · management</text><g class='el edge' tabindex='0' role='button' aria-label='Omgeving → Operatie (Systeem 1) (belast)' data-g='e0 omg ops' data-h='e0' data-tt='Omgeving → Operatie (Systeem 1) (belast)' data-tb='De omgeving zet de operatie onder druk met haar complexiteit. | De operatie moet daar genoeg eigen vermogen tegenover zetten.'><path class='hit' d='M282,75 C333,75 333,75 385,75'/><path class='vis' d='M282,75 C333,75 333,75 385,75' stroke='#73716a' stroke-width='4.4' marker-end='url(#ah140636678456512)'/><text x='333' y='69' class='elab'>belast</text></g><g class='el edge' tabindex='0' role='button' aria-label='Operatie (Systeem 1) → Filters (wordt gefilterd)' data-g='e1 ops fil' data-h='e1' data-tt='Operatie (Systeem 1) → Filters (wordt gefilterd)' data-tb='Niet alles gaat naar boven. | Alleen wat het management nodig heeft om te sturen, wordt doorgegeven.'><path class='hit' d='M500,106 L500,140'/><path class='vis' d='M500,106 L500,140' stroke='#b23b3b' stroke-width='3.4' marker-end='url(#ah140636678456512)'/><text x='534' y='127' class='elab'>wordt gefilterd</text></g><g class='el edge' tabindex='0' role='button' aria-label='Filters → Management (informeert)' data-g='e2 fil mgt' data-h='e2' data-tt='Filters → Management (informeert)' data-tb='Het management ziet een vereenvoudigd beeld. | Te veel filteren betekent blind sturen, te weinig betekent overbelasting.'><path class='hit' d='M615,171 C667,171 667,75 718,75'/><path class='vis' d='M615,171 C667,171 667,75 718,75' stroke='#73716a' stroke-width='2.4' marker-end='url(#ah140636678456512)'/><text x='667' y='117' class='elab'>informeert</text></g><g class='el edge' tabindex='0' role='button' aria-label='Management → Versterkers (wordt versterkt)' data-g='e3 mgt ver' data-h='e3' data-tt='Management → Versterkers (wordt versterkt)' data-tb='Het management vergroot zijn bereik. | Niet door meer te weten, maar door anderen in staat te stellen zelf te sturen.'><path class='hit' d='M833,106 L833,140'/><path class='vis' d='M833,106 L833,140' stroke='#2c7a52' stroke-width='3.4' marker-end='url(#ah140636678456512)'/><text x='867' y='127' class='elab'>wordt versterkt</text></g><g class='el node' tabindex='0' role='button' aria-label='Omgeving' data-g='omg e0' data-h='omg e0' data-tt='Omgeving' data-tb='Klanten, markt, wetgeving, technologie. | Hier gebeurt meer dan de organisatie ooit kan bijhouden.'><rect x='52' y='44' width='230' height='62' rx='10' class='nd std'/><text x='64' y='68' class='nt'>Omgeving</text><text x='64' y='87' class='nm'><tspan x='64' dy='0'>hoogste complexiteit</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Operatie (Systeem 1)' data-g='ops e0 e1' data-h='ops e0 e1' data-tt='Operatie (Systeem 1)' data-tb='De eenheden die het werk doen. | Zij vangen het grootste deel van de complexiteit op, dicht bij de bron.'><rect x='385' y='44' width='230' height='62' rx='10' class='nd kern'/><text x='397' y='68' class='nt'>Operatie (Systeem 1)</text><text x='397' y='87' class='nm'><tspan x='397' dy='0'>gemiddelde complexiteit</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Management' data-g='mgt e2 e3' data-h='mgt e2 e3' data-tt='Management' data-tb='Het metasysteem. | Kan maar een fractie van wat er in de operatie gebeurt zelf overzien.'><rect x='718' y='44' width='230' height='62' rx='10' class='nd std'/><text x='730' y='68' class='nt'>Management</text><text x='730' y='87' class='nm'><tspan x='730' dy='0'>laagste complexiteit</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Filters' data-g='fil e1 e2' data-h='fil e1 e2' data-tt='Filters' data-tb='Verminderen de complexiteit die omhoog gaat. | Voorbeelden: samenvattingen, kengetallen, uitzonderingsrapportage, standaardprocessen.'><rect x='385' y='140' width='230' height='62' rx='10' class='nd accent'/><text x='397' y='164' class='nt'>Filters</text><text x='397' y='183' class='nm'><tspan x='397' dy='0'>rapportage, standaarden</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Versterkers' data-g='ver e3' data-h='ver e3' data-tt='Versterkers' data-tb='Vergroten het vermogen van het management om te sturen. | Voorbeelden: delegatie, beleid en kaders, training, zelfsturing, IT-ondersteuning.'><rect x='718' y='140' width='230' height='62' rx='10' class='nd accent'/><text x='730' y='164' class='nt'>Versterkers</text><text x='730' y='183' class='nm'><tspan x='730' dy='0'>delegatie, kaders, IT</tspan></text></g></svg></div><div class='leesvb'><h4>Zo lees je dit diagram</h4><ul><li><span class='bdg-i' style='background:#b23b3b'>−</span>De operatie geeft niet alles door: filters maken de informatie behapbaar voor het management.</li><li><span class='bdg-i' style='background:#2c7a52'>+</span>Het management stuurt niet alles zelf: versterkers zoals delegatie en kaders vergroten zijn bereik.</li></ul></div><details class="sub"><summary><span class="nr">3.1</span> <h3 class="sk">Filteren en versterken in Beers termen</h3></summary><div class="body"><p>Beer noemt een filter een <span class="term" tabindex="0" data-term="attenuator" data-context="Beers term voor de filters in het diagram hierboven.">attenuator</span> en een versterker een <span class="term" tabindex="0" data-term="amplifier" data-context="Beers term voor de versterkers in het diagram hierboven.">amplifier</span>. Goed ontwerp zet ze bewust in, aan beide kanten van elke relatie.</p><details class="sub"><summary><span class="nr">3.1.1</span> <h3 class="sk">Een herkenbaar voorbeeld uit IT</h3></summary><div class="body"><p>Een servicedesk filtert duizenden meldingen tot een handvol trends voor de IT-manager. Zelfherstel-scripts en kennisbanken versterken de servicedesk, zodat die meer meldingen zelf afhandelt.</p></div></details></div></details><details class="sub"><summary><span class="nr">3.2</span> <h3 class="sk">Waarom dit centraal-plannen onmogelijk maakt</h3></summary><div class="body"><p>Volgens de <span class="term" tabindex="0" data-term="wet-van-ashby" data-context="Hier als argument tegen centrale detailsturing.">wet van Ashby</span> kan een centrale planner nooit alle <span class="term" tabindex="0" data-term="variteit" data-context="De complexiteit van de operatie die een planner niet kan evenaren.">variëteit</span> van de operatie evenaren. Daarom moet de operatie zo autonoom mogelijk zijn. Het management stuurt op samenhang, niet op elke beslissing.</p></div></details></div></details><details class="sec" id="s-4"><summary><h2>De vijf systemen: 1 doet het werk, 2 dempt conflicten, 3 optimaliseert het geheel, 4 kijkt vooruit, 5 bewaakt identiteit.</h2></summary><div class="body"><p>Systeem 1 is de operatie. De Systemen 2 tot en met 5 vormen samen het <span class="term" tabindex="0" data-term="metasysteem" data-context="De vier sturende functies samen, tegenover de operatie.">metasysteem</span>: alles wat ervoor zorgt dat de operationele eenheden één organisatie blijven.</p><p class='small'>Beweeg over de blokken en lijnen voor uitleg; klik om de uitleg vast te zetten.</p><svg class='dg-leg' viewBox='0 0 640 86' role='img' aria-label='Legenda'><path d='M10,16 L60,16' stroke='#73716a' stroke-width='2.6' fill='none'/><text x='72' y='20' class='nm'>vraag of sturing</text><path d='M10,42 L60,42' stroke='#2c7a52' stroke-width='2.6' fill='none'/><text x='72' y='46' class='nm'>coördinatie, verkenning of uitdaging</text><path d='M10,68 L60,68' stroke='#8a877c' stroke-width='2.6' fill='none' stroke-dasharray='7 5'/><text x='72' y='72' class='nm'>kader of waarneming, geen opdracht</text></svg><div class='dgwrap'><svg class='dg' viewBox='0 0 1000 332' role='group' aria-label='De vijf systemen van het VSM'><defs><marker id='ah140636678421760' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='9' markerHeight='9' markerUnits='userSpaceOnUse' orient='auto-start-reverse'><path d='M0,0 L10,5 L0,10 z' fill='#73716a'/></marker></defs><text x='28' y='22' class='colh'>0 · omgeving</text><text x='278' y='22' class='colh'>1 · operatie</text><text x='528' y='22' class='colh'>2 · sturen in het nu</text><text x='778' y='22' class='colh'>3 · richting en toekomst</text><g class='el edge' tabindex='0' role='button' aria-label='Omgeving nu → Eenheid A (vraagt)' data-g='e0 omg a' data-h='e0' data-tt='Omgeving nu → Eenheid A (vraagt)' data-tb='De omgeving vraagt prestaties van de operatie. | Elke eenheid heeft haar eigen stukje omgeving.'><path class='hit' d='M222,75 C250,75 250,75 278,75'/><path class='vis' d='M222,75 C250,75 250,75 278,75' stroke='#73716a' stroke-width='3.4' marker-end='url(#ah140636678421760)'/><text x='250' y='69' class='elab'>vraagt</text></g><g class='el edge' tabindex='0' role='button' aria-label='Systeem 3 → Eenheid A (stuurt)' data-g='e1 s3 a' data-h='e1' data-tt='Systeem 3 → Eenheid A (stuurt)' data-tb='Systeem 3 maakt met elke eenheid een resource bargain: middelen tegen verantwoording. | Binnen die afspraak is de eenheid vrij.'><path class='hit' d='M528,75 C500,75 500,75 472,75'/><path class='vis' d='M528,75 C500,75 500,75 472,75' stroke='#73716a' stroke-width='3.4' marker-end='url(#ah140636678421760)'/><text x='500' y='69' class='elab'>stuurt</text></g><g class='el edge' tabindex='0' role='button' aria-label='Systeem 2 → Eenheid B (coördineert)' data-g='e2 s2 b' data-h='e2' data-tt='Systeem 2 → Eenheid B (coördineert)' data-tb='Systeem 2 voorkomt dat eenheden elkaar in de weg zitten. | Zonder Systeem 2 ontstaat heen-en-weer-gedrag (oscillatie).'><path class='hit' d='M528,171 C500,171 500,171 472,171'/><path class='vis' d='M528,171 C500,171 500,171 472,171' stroke='#2c7a52' stroke-width='2.4' marker-end='url(#ah140636678421760)'/><text x='500' y='165' class='elab'>coördineert</text></g><g class='el edge' tabindex='0' role='button' aria-label='Systeem 3* → Eenheid B (audit)' data-g='e3 s3s b' data-h='e3' data-tt='Systeem 3* → Eenheid B (audit)' data-tb='Steekproefsgewijs direct kijken, buiten de rapportagelijn om. | Geen sturing, alleen waarneming.'><path class='hit' d='M528,267 C500,267 500,171 472,171'/><path class='vis' d='M528,267 C500,267 500,171 472,171' stroke='#8a877c' stroke-width='2.4' stroke-dasharray='7 5' marker-end='url(#ah140636678421760)'/><text x='500' y='213' class='elab'>audit</text></g><g class='el edge' tabindex='0' role='button' aria-label='Systeem 4 → Systeem 3 (daagt uit)' data-g='e4 s4 s3' data-h='e4' data-tt='Systeem 4 → Systeem 3 (daagt uit)' data-tb='De belangrijkste dialoog in het model. | Systeem 4 brengt voorstellen tot verandering, Systeem 3 brengt de realiteit van nu. | Beide hebben gelijk; geen van beide mag winnen.'><path class='hit' d='M778,171 C750,171 750,75 722,75'/><path class='vis' d='M778,171 C750,171 750,75 722,75' stroke='#2c7a52' stroke-width='3.4' marker-end='url(#ah140636678421760)'/><text x='750' y='117' class='elab'>daagt uit</text><circle cx='750' cy='133' r='8.5' fill='#2c7a52' stroke='#fff' stroke-width='1.5'/><text x='750' y='136.8' class='bdg'>⇄</text></g><g class='el edge' tabindex='0' role='button' aria-label='Systeem 5 → Systeem 3 (kaders)' data-g='e5 s5 s3' data-h='e5' data-tt='Systeem 5 → Systeem 3 (kaders)' data-tb='Beleid en identiteit begrenzen hoe Systeem 3 optimaliseert.'><path class='hit' d='M778,75 C750,75 750,75 722,75'/><path class='vis' d='M778,75 C750,75 750,75 722,75' stroke='#8a877c' stroke-width='2.4' stroke-dasharray='7 5' marker-end='url(#ah140636678421760)'/><text x='750' y='69' class='elab'>kaders</text></g><g class='el edge' tabindex='0' role='button' aria-label='Systeem 5 → Systeem 4 (kaders)' data-g='e6 s5 s4' data-h='e6' data-tt='Systeem 5 → Systeem 4 (kaders)' data-tb='Beleid bepaalt welke toekomsten Systeem 4 verkent. | Systeem 5 kiest uiteindelijk de richting.'><path class='hit' d='M875,106 L875,140'/><path class='vis' d='M875,106 L875,140' stroke='#8a877c' stroke-width='2.4' stroke-dasharray='7 5' marker-end='url(#ah140636678421760)'/><text x='909' y='127' class='elab'>kaders</text></g><g class='el edge' tabindex='0' role='button' aria-label='Systeem 4 → Omgeving straks (verkent)' data-g='e7 s4 fut' data-h='e7' data-tt='Systeem 4 → Omgeving straks (verkent)' data-tb='Systeem 4 scant trends, technologie en concurrentie. | Vergelijkbaar met bellwethers volgen in scenarioplanning.'><path class='hit' d='M875,202 L875,236'/><path class='vis' d='M875,202 L875,236' stroke='#2c7a52' stroke-width='2.4' marker-end='url(#ah140636678421760)'/><text x='909' y='223' class='elab'>verkent</text></g><g class='el node' tabindex='0' role='button' aria-label='Omgeving nu' data-g='omg e0' data-h='omg e0' data-tt='Omgeving nu' data-tb='De omgeving waarin de operatie vandaag werkt.'><rect x='28' y='44' width='194' height='62' rx='10' class='nd std'/><text x='40' y='68' class='nt'>Omgeving nu</text><text x='40' y='87' class='nm'><tspan x='40' dy='0'>klanten, markt, regels</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Eenheid A' data-g='a e0 e1' data-h='a e0 e1' data-tt='Eenheid A' data-tb='Een operationele eenheid die waarde levert. | Zelf weer een levensvatbaar systeem (recursie).'><rect x='278' y='44' width='194' height='62' rx='10' class='nd kern'/><text x='290' y='68' class='nt'>Eenheid A</text><text x='290' y='87' class='nm'><tspan x='290' dy='0'>Systeem 1</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Eenheid B' data-g='b e2 e3' data-h='b e2 e3' data-tt='Eenheid B' data-tb='Een tweede operationele eenheid. | Deelt middelen of klanten met A, dus kan ermee botsen.'><rect x='278' y='140' width='194' height='62' rx='10' class='nd kern'/><text x='290' y='164' class='nt'>Eenheid B</text><text x='290' y='183' class='nm'><tspan x='290' dy='0'>Systeem 1</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Systeem 3' data-g='s3 e1 e4 e5' data-h='s3 e1 e4 e5' data-tt='Systeem 3' data-tb='Optimaliseert het geheel van de eenheden. | Verdeelt middelen en maakt afspraken (resource bargain). | Ziet synergie die eenheden zelf niet zien.'><rect x='528' y='44' width='194' height='62' rx='10' class='nd std'/><text x='540' y='68' class='nt'>Systeem 3</text><text x='540' y='87' class='nm'><tspan x='540' dy='0'>controle: hier en nu</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Systeem 2' data-g='s2 e2' data-h='s2 e2' data-tt='Systeem 2' data-tb='Dempt oscillatie tussen eenheden. | Voorbeelden: roosters, standaarden, gedeelde planning, protocollen. | Geen baas: een service voor de eenheden.'><rect x='528' y='140' width='194' height='62' rx='10' class='nd std'/><text x='540' y='164' class='nt'>Systeem 2</text><text x='540' y='183' class='nm'><tspan x='540' dy='0'>coördinatie</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Systeem 3*' data-g='s3s e3' data-h='s3s e3' data-tt='Systeem 3*' data-tb='Kijkt af en toe direct in de operatie. | Controleert of de rapportage klopt met de werkelijkheid.'><rect x='528' y='236' width='194' height='62' rx='10' class='nd std'/><text x='540' y='260' class='nt'>Systeem 3*</text><text x='540' y='279' class='nm'><tspan x='540' dy='0'>audit, steekproef</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Systeem 5' data-g='s5 e5 e6' data-h='s5 e5 e6' data-tt='Systeem 5' data-tb='Bepaalt wie we zijn en wat we niet doen. | Weegt Systeem 3 (nu) en 4 (straks) tegen elkaar af. | Grijpt zelden direct in.'><rect x='778' y='44' width='194' height='62' rx='10' class='nd std'/><text x='790' y='68' class='nt'>Systeem 5</text><text x='790' y='87' class='nm'><tspan x='790' dy='0'>identiteit en beleid</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Systeem 4' data-g='s4 e4 e6 e7' data-h='s4 e4 e6 e7' data-tt='Systeem 4' data-tb='Kijkt naar de omgeving en de toekomst. | Bouwt een model van wat er verandert en wat de organisatie daarvoor moet worden.'><rect x='778' y='140' width='194' height='62' rx='10' class='nd std'/><text x='790' y='164' class='nt'>Systeem 4</text><text x='790' y='183' class='nm'><tspan x='790' dy='0'>intelligence: daar en straks</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Omgeving straks' data-g='fut e7' data-h='fut e7' data-tt='Omgeving straks' data-tb='De toekomstige omgeving: wat nu nog niet speelt maar wel gaat komen.'><rect x='778' y='236' width='194' height='62' rx='10' class='nd std'/><text x='790' y='260' class='nt'>Omgeving straks</text><text x='790' y='279' class='nm'><tspan x='790' dy='0'>trends, technologie</tspan></text></g></svg></div><div class='leesvb'><h4>Zo lees je dit diagram</h4><ul><li><span class='bdg-i' style='background:#2c7a52'>⇄</span>Systeem 4 ziet in de toekomstige omgeving dat er iets moet veranderen en daagt Systeem 3 uit. Systeem 5 weegt af als ze het niet eens worden.</li><li><span class='bdg-i' style='background:#8a877c'>·</span>Systeem 3* kijkt steekproefsgewijs in eenheid B, zodat het management niet alleen op rapportages vertrouwt.</li></ul></div><details class="sub"><summary><span class="nr">4.1</span> <h3 class="sk">Systeem 1: de operatie die waarde levert</h3></summary><div class="body"><p>Dit zijn de eenheden waarvoor de organisatie bestaat: opleidingen, productlijnen, regio's. Elke eenheid heeft haar eigen omgeving en haar eigen lokale management.</p><details class="sub"><summary><span class="nr">4.1.1</span> <h3 class="sk">Toets: zou de eenheid zelfstandig kunnen bestaan?</h3></summary><div class="body"><p>Een stafafdeling zoals HR of ICT is géén Systeem 1. Die ondersteunt de operatie en hoort bij het <span class="term" tabindex="0" data-term="metasysteem" data-context="Waar stafafdelingen thuishoren als ze geen eigen waarde leveren.">metasysteem</span> of is een gedeelde dienst. Deze toets is in de praktijk het eerste waar het op misgaat.</p></div></details></div></details><details class="sub"><summary><span class="nr">4.2</span> <h3 class="sk">Systeem 2: coördinatie tegen oscillatie</h3></summary><div class="body"><p>Als twee eenheden dezelfde middelen gebruiken, gaan ze elkaar beïnvloeden. Zonder afspraken reageert elk op de ander en ontstaat heen-en-weer-gedrag. Systeem 2 dempt dat met roosters, standaarden en protocollen.</p><p>Systeem 2 is geen gezag. Het is een dienst die de eenheden zelf willen, omdat het hun werk makkelijker maakt.</p></div></details><details class="sub"><summary><span class="nr">4.3</span> <h3 class="sk">Systeem 3 en 3*: het geheel optimaliseren</h3></summary><div class="body"><p>Systeem 3 kijkt naar alle eenheden samen en verdeelt middelen. Het maakt per eenheid een <span class="term" tabindex="0" data-term="resource-bargain" data-context="De afspraak die Systeem 3 met elke eenheid maakt.">resource bargain</span>. Zo ontstaat synergie die geen eenheid alleen kan bereiken.</p><p><span class="term" tabindex="0" data-term="s3-ster" data-context="Het auditkanaal naast de gewone rapportagelijn.">Systeem 3*</span> controleert steekproefsgewijs of wat gerapporteerd wordt ook klopt. Het is waarneming, geen sturing.</p></div></details><details class="sub"><summary><span class="nr">4.4</span> <h3 class="sk">Systeem 4: de omgeving en de toekomst</h3></summary><div class="body"><p>Systeem 4 kijkt naar buiten en vooruit. Het onderhoudt twee modellen: van de organisatie zoals ze nu is (van Systeem 3) en van de omgeving zoals die wordt. Uit het verschil komen voorstellen tot verandering.</p><p>Dit lijkt sterk op scenarioplanning met <span class="term" tabindex="0" data-term="bellwether" data-context="Het anker: jouw eigen manier om signalen uit de omgeving te volgen, net als Systeem 4.">bellwethers</span>: je volgt meetbare signalen om te zien welke toekomst dichterbij komt.</p></div></details><details class="sub"><summary><span class="nr">4.5</span> <h3 class="sk">Systeem 5: identiteit en evenwicht</h3></summary><div class="body"><p>Systeem 5 bepaalt wie de organisatie is en waarvoor ze staat. Zijn belangrijkste taak is het evenwicht bewaken tussen Systeem 3 (stabiliteit, efficiëntie) en Systeem 4 (verandering).</p><p>Een goed Systeem 5 grijpt zelden in. Het zet kaders en kiest richting wanneer 3 en 4 er samen niet uitkomen.</p></div></details></div></details><details class="sec" id="s-5"><summary><h2>De kernspanning zit tussen Systeem 3 (hier en nu) en Systeem 4 (daar en straks); Systeem 5 houdt die in evenwicht.</h2></summary><div class="body"><p>De meeste organisaties hebben een sterk Systeem 3, omdat de waan van de dag altijd voorgaat. Systeem 4 krijgt dan te weinig aandacht, en de organisatie mist veranderingen in haar omgeving.</p><details class="sub"><summary><span class="nr">5.1</span> <h3 class="sk">Wat er gebeurt als 3 wint</h3></summary><div class="body"><p>De organisatie wordt steeds efficiënter in iets wat er straks niet meer toe doet. Typisch: projecten voor vernieuwing sneuvelen telkens op 'eerst de basis op orde'.</p></div></details><details class="sub"><summary><span class="nr">5.2</span> <h3 class="sk">Wat er gebeurt als 4 wint</h3></summary><div class="body"><p>Er komen voortdurend nieuwe plannen en strategieën, maar de operatie kan ze niet uitvoeren. Vernieuwing landt niet, en het vertrouwen in de leiding daalt.</p></div></details><details class="sub"><summary><span class="nr">5.3</span> <h3 class="sk">Hoe Systeem 5 het evenwicht bewaakt</h3></summary><div class="body"><p>Niet door zelf te beslissen over elke kwestie, maar door de dialoog tussen 3 en 4 te organiseren en een identiteit te bieden waaraan beide kunnen toetsen: past dit bij wie we willen zijn?</p></div></details></div></details><details class="sec" id="s-6"><summary><h2>Het model is <span class="term" tabindex="0" data-term="recursie" data-context="De eigenschap die het model op elke schaal bruikbaar maakt.">recursief</span>: elke operationele eenheid is zelf weer een levensvatbaar systeem met dezelfde vijf functies.</h2><span class="pill neutral">anker: recursie in C</span></summary><div class="body"><p>Een opleiding binnen een college, een team binnen een opleiding: op elk niveau zie je weer Systeem 1 tot en met 5. Je kiest steeds bewust op welk niveau je kijkt, het 'system-in-focus'.</p><details class="sub"><summary><span class="nr">6.1</span> <h3 class="sk">Vergelijk het met een <span class="term" tabindex="0" data-term="recursie" data-context="Het anker uit programmeren waarmee het model wordt vergeleken.">recursieve</span> functie</h3></summary><div class="body"><p>In C kan een functie zichzelf aanroepen op een kleiner stuk van het probleem, zoals een boom doorlopen. Het <span class="term" tabindex="0" data-term="vsm" data-context="Het model dat hier met een recursieve functie wordt vergeleken.">VSM</span> werkt zo: hetzelfde patroon, steeds een niveau dieper, tot je bij het individu uitkomt.</p><div class="callout warn"><span class="tag">Waar de vergelijking mankeert</span><p>Een <span class="term" tabindex="0" data-term="recursie" data-context="De softwarekant van de vergelijking, waar de analogie stopt.">recursieve</span> functie is overal identiek. In een organisatie verschillen de niveaus wel in vorm: Systeem 4 van een team is misschien één persoon die het vak bijhoudt, Systeem 4 van het college een strategiestaf. De functie is gelijk, de invulling niet.</p></div></div></details><details class="sub"><summary><span class="nr">6.2</span> <h3 class="sk">Of aan een compositierelatie in <span class="term" tabindex="0" data-term="archimate" data-context="Het anker: de modelleertaal waarin je dit zou vastleggen.">ArchiMate</span></h3></summary><div class="body"><p>Een geheel bestaat uit delen die zelf weer delen hebben. Het verschil: bij het <span class="term" tabindex="0" data-term="vsm" data-context="Het model, vergeleken met compositie in ArchiMate.">VSM</span> heeft elk deel óók zijn eigen sturing. Het is geen decompositie van functies, maar een nesting van zelfsturende systemen.</p></div></details><details class="sub"><summary><span class="nr">6.3</span> <h3 class="sk">Waarom <span class="term" tabindex="0" data-term="recursie" data-context="De gelaagdheid die verklaart waarom eenheden autonoom kunnen zijn.">recursie</span> de autonomie beschermt</h3></summary><div class="body"><p>Omdat elke eenheid zelf alle vijf functies heeft, hoeft het niveau erboven niet alles te regelen. Het <span class="term" tabindex="0" data-term="metasysteem" data-context="Het sturende deel van het niveau erboven, dat zich beperkt tot samenhang.">metasysteem</span> bemoeit zich alleen met wat de eenheden samen aangaat.</p><p>Lukt het een eenheid toch niet, dan gaat er een <span class="term" tabindex="0" data-term="algedonisch" data-context="De noodlijn die de recursieve lagen overbrugt bij grote afwijkingen.">algedonisch signaal</span> omhoog: een alarm dat niveaus overslaat als het lokaal niet op tijd wordt opgelost.</p></div></details></div></details><details class="sec" id="s-7"><summary><h2>Ontwerpregel: geef eenheden zoveel mogelijk autonomie, en beperk het <span class="term" tabindex="0" data-term="metasysteem" data-context="Het sturende deel dat zo klein mogelijk moet blijven.">metasysteem</span> tot wat nodig is voor samenhang.</h2></summary><div class="body"><p>Dit is het praktische advies dat uit de theorie volgt. Te veel centrale sturing verstikt de eenheden; te weinig laat de organisatie uit elkaar vallen.</p><details class="sub"><summary><span class="nr">7.1</span> <h3 class="sk">Hoe je de grens vindt</h3></summary><div class="body"><p>Stel per beslissing de vraag: raakt dit alleen deze eenheid, of ook andere? Alleen dat laatste is werk voor het <span class="term" tabindex="0" data-term="metasysteem" data-context="Waar beslissingen heen gaan die meerdere eenheden raken.">metasysteem</span>. Dat is de cybernetische versie van subsidiariteit.</p></div></details><details class="sub"><summary><span class="nr">7.2</span> <h3 class="sk">Vertrouwen en controle in balans</h3></summary><div class="body"><p>Autonomie werkt alleen als het <span class="term" tabindex="0" data-term="metasysteem" data-context="Het sturende deel dat zicht nodig heeft om autonomie te kunnen geven.">metasysteem</span> kan zien wat er gebeurt. Daarom zijn er drie kanalen: de <span class="term" tabindex="0" data-term="resource-bargain" data-context="Het eerste kanaal: vooraf gemaakte afspraken.">resource bargain</span> (afspraken), <span class="term" tabindex="0" data-term="s3-ster" data-context="Het tweede kanaal: zelf af en toe kijken.">Systeem 3*</span> (steekproeven) en <span class="term" tabindex="0" data-term="algedonisch" data-context="Het derde kanaal: alarm bij grote afwijking.">algedonische signalen</span> (alarm).</p><p>Dit lijkt op een agent met read-only als standaard en een approval flow: veel vrijheid binnen kaders, plus een vast moment waarop een mens meekijkt.</p></div></details></div></details><details class="sec" id="s-8"><summary><h2>Zie het <span class="term" tabindex="0" data-term="vsm" data-context="Hier vergeleken met een referentiearchitectuur.">VSM</span> als een referentiearchitectuur voor sturing: een algemeen model dat je op je eigen organisatie legt om gaten te vinden.</h2><span class="pill neutral">anker: MORA</span></summary><div class="body"><p>Bij de <span class="term" tabindex="0" data-term="mora" data-context="Het anker: een referentiemodel dat je als meetlat naast de werkelijkheid legt.">MORA</span> leg je het referentiemodel naast het IV-landschap van een instelling en zie je welke functies ontbreken of dubbel zijn. Met het <span class="term" tabindex="0" data-term="vsm" data-context="Het model, op dezelfde manier als meetlat gebruikt.">VSM</span> doe je hetzelfde, maar dan voor sturing en communicatie.</p><p class='small'>Beweeg over de blokken en lijnen voor uitleg; klik om de uitleg vast te zetten.</p><svg class='dg-leg' viewBox='0 0 640 60' role='img' aria-label='Legenda'><path d='M10,16 L60,16' stroke='#2c7a52' stroke-width='2.6' fill='none'/><text x='72' y='20' class='nm'>komt overeen met</text><path d='M10,42 L60,42' stroke='#b23b3b' stroke-width='2.6' fill='none'/><text x='72' y='46' class='nm'>hier mankeert de vergelijking</text></svg><div class='dgwrap'><svg class='dg' viewBox='0 0 1000 524' role='group' aria-label='Wat je kent en wat het VSM daarvan heeft'><defs><marker id='ah140636678415872' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='9' markerHeight='9' markerUnits='userSpaceOnUse' orient='auto-start-reverse'><path d='M0,0 L10,5 L0,10 z' fill='#73716a'/></marker></defs><text x='135' y='22' class='colh'>1 · wat je al kent</text><text x='635' y='22' class='colh'>2 · in het VSM</text><g class='el edge' tabindex='0' role='button' aria-label='Referentiearchitectuur → Het VSM als geheel (werkt zoals)' data-g='e0 mora vsm' data-h='e0' data-tt='Referentiearchitectuur → Het VSM als geheel (werkt zoals)' data-tb='Beide zijn meetlatten: je zoekt de gaten tussen model en werkelijkheid. | Verschil: de MORA gaat over processen en informatie, het VSM over sturing en communicatie.'><path class='hit' d='M365,75 C500,75 500,75 635,75'/><path class='vis' d='M365,75 C500,75 500,75 635,75' stroke='#2c7a52' stroke-width='2.4' marker-end='url(#ah140636678415872)'/><text x='500' y='69' class='elab'>werkt zoals</text></g><g class='el edge' tabindex='0' role='button' aria-label='Bellwethers → Systeem 4 (werkt zoals)' data-g='e1 bell s4' data-h='e1' data-tt='Bellwethers → Systeem 4 (werkt zoals)' data-tb='Beide volgen signalen uit de omgeving om op tijd te veranderen. | Systeem 4 doet daarnaast meer: het ontwerpt ook wat de organisatie moet worden.'><path class='hit' d='M365,171 C500,171 500,171 635,171'/><path class='vis' d='M365,171 C500,171 500,171 635,171' stroke='#2c7a52' stroke-width='2.4' marker-end='url(#ah140636678415872)'/><text x='500' y='165' class='elab'>werkt zoals</text></g><g class='el edge' tabindex='0' role='button' aria-label='Recursieve functie → Recursie (werkt zoals)' data-g='e2 rec recv' data-h='e2' data-tt='Recursieve functie → Recursie (werkt zoals)' data-tb='Hetzelfde patroon op elk niveau. | Verschil: in een organisatie verschilt de invulling per niveau.'><path class='hit' d='M365,267 C500,267 500,267 635,267'/><path class='vis' d='M365,267 C500,267 500,267 635,267' stroke='#2c7a52' stroke-width='2.4' marker-end='url(#ah140636678415872)'/><text x='500' y='261' class='elab'>werkt zoals</text></g><g class='el edge' tabindex='0' role='button' aria-label='Approval flow → Autonomie + Systeem 3* (werkt zoals)' data-g='e3 appr aut' data-h='e3' data-tt='Approval flow → Autonomie + Systeem 3* (werkt zoals)' data-tb='Vrijheid binnen kaders, plus controle zonder alles zelf te doen.'><path class='hit' d='M365,363 C500,363 500,363 635,363'/><path class='vis' d='M365,363 C500,363 500,363 635,363' stroke='#2c7a52' stroke-width='2.4' marker-end='url(#ah140636678415872)'/><text x='500' y='357' class='elab'>werkt zoals</text></g><g class='el edge' tabindex='0' role='button' aria-label='Organogram → Functies, geen posities (is níet)' data-g='e4 org func' data-h='e4' data-tt='Organogram → Functies, geen posities (is níet)' data-tb='De grootste valkuil: het VSM als organogram tekenen. | Systeem 1 tot en met 5 zijn geen managementlagen.'><path class='hit' d='M365,459 C500,459 500,459 635,459'/><path class='vis' d='M365,459 C500,459 500,459 635,459' stroke='#b23b3b' stroke-width='3.4' marker-end='url(#ah140636678415872)'/><text x='500' y='453' class='elab'>is níet</text><circle cx='500' cy='469' r='8.5' fill='#b23b3b' stroke='#fff' stroke-width='1.5'/><text x='500' y='472.8' class='bdg'>≠</text></g><g class='el node' tabindex='0' role='button' aria-label='Referentiearchitectuur' data-g='mora e0' data-h='mora e0' data-tt='Referentiearchitectuur' data-tb='Een algemeen model dat elke instelling op haar eigen situatie legt. | Je vindt ontbrekende en dubbele functies.'><rect x='135' y='44' width='230' height='62' rx='10' class='nd anker'/><text x='147' y='68' class='nt'>Referentiearchitectuur</text><text x='147' y='87' class='nm'><tspan x='147' dy='0'>MORA als meetlat</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Bellwethers' data-g='bell e1' data-h='bell e1' data-tt='Bellwethers' data-tb='Meetbare indicatoren die laten zien welk scenario dichterbij komt.'><rect x='135' y='140' width='230' height='62' rx='10' class='nd anker'/><text x='147' y='164' class='nt'>Bellwethers</text><text x='147' y='183' class='nm'><tspan x='147' dy='0'>signalen uit scenario&#x27;s</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Recursieve functie' data-g='rec e2' data-h='rec e2' data-tt='Recursieve functie' data-tb='Hetzelfde patroon, steeds een niveau dieper.'><rect x='135' y='236' width='230' height='62' rx='10' class='nd anker'/><text x='147' y='260' class='nt'>Recursieve functie</text><text x='147' y='279' class='nm'><tspan x='147' dy='0'>C: functie roept zichzelf aan</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Approval flow' data-g='appr e3' data-h='appr e3' data-tt='Approval flow' data-tb='Vrijheid binnen kaders, met een controlemoment.'><rect x='135' y='332' width='230' height='62' rx='10' class='nd anker'/><text x='147' y='356' class='nt'>Approval flow</text><text x='147' y='375' class='nm'><tspan x='147' dy='0'>agents: read-only + goedkeuring</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Organogram' data-g='org e4' data-h='org e4' data-tt='Organogram' data-tb='Een hiërarchisch beeld van posities en rapportagelijnen.'><rect x='135' y='428' width='230' height='62' rx='10' class='nd anker'/><text x='147' y='452' class='nt'>Organogram</text><text x='147' y='471' class='nm'><tspan x='147' dy='0'>wie is wiens baas</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Het VSM als geheel' data-g='vsm e0' data-h='vsm e0' data-tt='Het VSM als geheel' data-tb='Een algemeen model van vijf functies dat je naast een organisatie legt.'><rect x='635' y='44' width='230' height='62' rx='10' class='nd kern'/><text x='647' y='68' class='nt'>Het VSM als geheel</text><text x='647' y='87' class='nm'><tspan x='647' dy='0'>diagnosemodel voor sturing</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Systeem 4' data-g='s4 e1' data-h='s4 e1' data-tt='Systeem 4' data-tb='Volgt signalen uit de omgeving en vertaalt ze naar voorstellen tot verandering.'><rect x='635' y='140' width='230' height='62' rx='10' class='nd std'/><text x='647' y='164' class='nt'>Systeem 4</text><text x='647' y='183' class='nm'><tspan x='647' dy='0'>omgeving en toekomst</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Recursie' data-g='recv e2' data-h='recv e2' data-tt='Recursie' data-tb='Elke eenheid is zelf een levensvatbaar systeem.'><rect x='635' y='236' width='230' height='62' rx='10' class='nd std'/><text x='647' y='260' class='nt'>Recursie</text><text x='647' y='279' class='nm'><tspan x='647' dy='0'>eenheden in eenheden</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Autonomie + Systeem 3*' data-g='aut e3' data-h='aut e3' data-tt='Autonomie + Systeem 3*' data-tb='Eenheden zijn vrij binnen de resource bargain; het metasysteem kijkt af en toe mee.'><rect x='635' y='332' width='230' height='62' rx='10' class='nd std'/><text x='647' y='356' class='nt'>Autonomie + Systeem 3*</text><text x='647' y='375' class='nm'><tspan x='647' dy='0'>afspraak, steekproef, alarm</tspan></text></g><g class='el node' tabindex='0' role='button' aria-label='Functies, geen posities' data-g='func e4' data-h='func e4' data-tt='Functies, geen posities' data-tb='Het VSM beschrijft functies. Wie ze vervult staat los daarvan.'><rect x='635' y='428' width='230' height='62' rx='10' class='nd std'/><text x='647' y='452' class='nt'>Functies, geen posities</text><text x='647' y='471' class='nm'><tspan x='647' dy='0'>wat moet er gebeuren</tspan></text></g></svg></div><div class='leesvb'><h4>Zo lees je dit diagram</h4><ul><li><span class='bdg-i' style='background:#2c7a52'>+</span>Zoals je bellwethers volgt om te zien welk scenario dichterbij komt, zo volgt Systeem 4 de omgeving.</li><li><span class='bdg-i' style='background:#b23b3b'>≠</span>Een organogram toont posities; het VSM toont functies. Wie ze door elkaar haalt, tekent het model verkeerd.</li></ul></div><div class="callout warn"><span class="tag">Waar de vergelijking mankeert</span><p>Een referentiearchitectuur is statisch: je vergelijkt structuren. Het <span class="term" tabindex="0" data-term="vsm" data-context="Het model, als dynamische tegenhanger van een referentiearchitectuur.">VSM</span> gaat over dynamiek: of informatie op tijd de juiste plek bereikt en of de organisatie snel genoeg kan reageren. Twee organisaties met dezelfde 'boxen' kunnen dus heel verschillend scoren.</p></div><details class="sub"><summary><span class="nr">8.1</span> <h3 class="sk">Verschil met <span class="term" tabindex="0" data-term="togaf" data-context="Het architectuurraamwerk waarmee het model wordt vergeleken.">TOGAF</span></h3></summary><div class="body"><p><span class="term" tabindex="0" data-term="togaf" data-context="Het anker: de methode die je kent, naast een model dat een ander soort vraag beantwoordt.">TOGAF</span> beschrijft hoe je architectuur ontwikkelt en beheert. Het <span class="term" tabindex="0" data-term="vsm" data-context="Het model, als aanvulling op TOGAF: het beschrijft wat een organisatie nodig heeft, niet hoe je architectuur maakt.">VSM</span> beschrijft wat een organisatie nodig heeft om te overleven. Ze vullen elkaar aan: je kunt de architectuurfunctie zelf als onderdeel van het <span class="term" tabindex="0" data-term="vsm" data-context="Het model, als aanvulling op TOGAF: het beschrijft wat een organisatie nodig heeft, niet hoe je architectuur maakt.">VSM</span> beschouwen.</p></div></details></div></details><details class="sec" id="s-9"><summary><h2>Voorbeeld: in een <span class="term" tabindex="0" data-term="mbo" data-context="De sector waaruit het voorbeeld komt.">mbo</span>-college zijn de opleidingsteams Systeem 1, het college van bestuur vult vaak 3, 4 én 5 in.</h2></summary><div class="body"><p>Dit voorbeeld is illustratief en algemeen, niet gebaseerd op één bepaalde instelling. Het laat zien hoe je het model naast een organisatie legt.</p><div class="tablewrap"><table><thead><tr><th>Systeem</th><th>In een mbo-college</th><th>Typische vraag bij diagnose</th></tr></thead><tbody><tr><td>1 · operatie</td><td>Opleidingsdomeinen en teams</td><td>Kunnen teams zelf beslissen over hun onderwijs binnen de kaders?</td></tr><tr><td>2 · coördinatie</td><td>Roosters, onderwijs- en examenregeling, gedeelde lokalen</td><td>Botsen teams over lokalen en docenten, en wie lost dat op?</td></tr><tr><td>3 · controle</td><td>Directie onderwijs, planning en control, budgetverdeling</td><td>Zijn de afspraken per team helder (middelen tegen resultaten)?</td></tr><tr><td>3* · audit</td><td>Kwaliteitszorg, interne audits, examencommissie</td><td>Vertrouwt het bestuur alleen op rapportages, of kijkt het ook zelf?</td></tr><tr><td>4 · intelligence</td><td>Strategie, arbeidsmarktverkenning, innovatie</td><td>Wie volgt de arbeidsmarkt en de regio, en wordt daar iets mee gedaan?</td></tr><tr><td>5 · identiteit</td><td>College van bestuur en raad van toezicht, missie</td><td>Is helder waar het college voor staat, en wat het níet doet?</td></tr></tbody></table></div><details class="sub"><summary><span class="nr">9.1</span> <h3 class="sk">Wat deze diagnose vaak laat zien</h3></summary><div class="body"><p>Een veelvoorkomend patroon: Systeem 3 is sterk (planning en control), Systeem 4 is versnipperd over projecten, en het college van bestuur zit vooral in Systeem 3. Dan wint het nu het van straks.</p><details class="sub"><summary><span class="nr">9.1.1</span> <h3 class="sk">Een tweede niveau: de opleiding zelf</h3></summary><div class="body"><p>Kijk je één niveau dieper (<span class="term" tabindex="0" data-term="recursie" data-context="De stap van college naar opleiding, met hetzelfde model.">recursie</span>), dan is het opleidingsteam het system-in-focus. De docenten en klassen zijn dan Systeem 1, en de teamleider vult vaak Systemen 3 tot en met 5 tegelijk in.</p></div></details></div></details></div></details><details class="sec" id="s-10"><summary><h2>In de praktijk gebruik je het <span class="term" tabindex="0" data-term="vsm" data-context="Het model als diagnose-instrument.">VSM</span> vooral als diagnose: welke functie ontbreekt, is te zwak of zit op de verkeerde plek?</h2></summary><div class="body"><p>Je ontwerpt zelden een organisatie vanaf nul met het <span class="term" tabindex="0" data-term="vsm" data-context="Het model, naast een bestaande organisatie gelegd.">VSM</span>. Veel vaker leg je het naast een bestaande situatie en zoek je naar de oorzaak van een terugkerend probleem.</p><details class="sub"><summary><span class="nr">10.1</span> <h3 class="sk">Vier stappen voor een diagnose</h3></summary><div class="body"><ul><li>Kies het system-in-focus en zijn doel: welk niveau bekijk je?</li><li>Benoem de eenheden van Systeem 1 en hun omgeving.</li><li>Zoek per functie (2 tot en met 5) wie of wat haar vervult.</li><li>Kijk naar de kanalen ertussen: is de informatie op tijd, volledig en behapbaar?</li></ul></div></details><details class="sub"><summary><span class="nr">10.2</span> <h3 class="sk">Bekende ziektebeelden</h3></summary><div class="body"><ul><li>Systeem 2 ontbreekt: eenheden blijven botsen, het management lost steeds dezelfde conflicten op.</li><li>Systeem 3 zit in de operatie: het management stuurt op details en de eenheden verliezen autonomie.</li><li>Systeem 4 is zwak: de organisatie wordt verrast door veranderingen die al lang zichtbaar waren.</li><li>Systeem 5 zit in Systeem 3: het bestuur is druk met de dagelijkse gang van zaken en de identiteit vervaagt.</li></ul></div></details></div></details><details class="sec" id="s-11"><summary><h2>Voor architecten is het <span class="term" tabindex="0" data-term="vsm" data-context="Hier toegepast op het eigen vakgebied van de architect.">VSM</span> een lens op <span class="term" tabindex="0" data-term="it-governance" data-context="Het domein waarop onderzoekers het model als lens toepassen.">IT-governance</span> en op de architectuurfunctie zelf, die je als deel van Systeem 4 kunt zien.</h2></summary><div class="body"><p>Onderzoekers aan de TU München beschouwen het beheer van enterprise-architectuur als een levensvatbaar systeem. Onderzoekers in Antwerpen gebruiken het model om <span class="term" tabindex="0" data-term="it-governance" data-context="Het onderzoeksgebied van de casestudy uit Antwerpen.">IT-governance</span> in een organisatie te analyseren.</p><details class="sub"><summary><span class="nr">11.1</span> <h3 class="sk">De architectuurfunctie als Systeem 4</h3></summary><div class="body"><p>Een architectuurfunctie kijkt naar de toekomst, ontwerpt streefbeelden en brengt die naar het nu. Dat is werk van Systeem 4. Het spanningsveld met Systeem 3 (projecten en beheer die 'eerst leveren') herken je direct.</p><div class="callout warn"><span class="tag">Waar de vergelijking mankeert</span><p>Architecten doen ook werk van Systeem 2 (standaarden, principes die botsingen voorkomen) en <span class="term" tabindex="0" data-term="s3-ster" data-context="Reviews en compliance-checks van architecten als auditkanaal.">Systeem 3*</span> (reviews, compliance). De rol is in het model dus verspreid over meerdere functies.</p></div></div></details><details class="sub"><summary><span class="nr">11.2</span> <h3 class="sk">Architectuurprincipes als Systeem 2 en 5</h3></summary><div class="body"><p>Principes die alleen botsingen voorkomen, zoals 'één bron per gegeven', zijn coördinatie (Systeem 2). Principes die zeggen wie de organisatie is, zoals 'wij bouwen niet zelf', zijn identiteit (Systeem 5). Dat onderscheid helpt bij het ordenen van een principeset.</p></div></details></div></details><details class="sec" id="s-12"><summary><h2>Bij opdrachtgevers kun je het <span class="term" tabindex="0" data-term="vsm" data-context="Het model als gespreks- en diagnose-instrument bij klanten.">VSM</span> gebruiken als snelle diagnose van sturingsproblemen, en als ontwerp voor een monitoring-agent.</h2><span class="pill ok">toepassing</span></summary><div class="body"><p>Je hoeft het model niet uit te leggen om het te gebruiken. De vragen per systeem werken ook zonder theorie.</p><details class="sub"><summary><span class="nr">12.1</span> <h3 class="sk">Vijf vragen voor een eerste gesprek</h3></summary><div class="body"><ul><li>Welke eenheden leveren hier echt waarde, en hoe zelfstandig zijn ze?</li><li>Waar botsen die eenheden, en wie lost dat op?</li><li>Hoe weet het bestuur of de rapportages kloppen?</li><li>Wie kijkt er structureel naar buiten en naar de toekomst, en wat gebeurt er met die inzichten?</li><li>Waar staat deze organisatie voor, en wat doet ze bewust níet?</li></ul></div></details><details class="sub"><summary><span class="nr">12.2</span> <h3 class="sk">Idee: een Systeem-4-agent</h3></summary><div class="body"><p>Je scenario-project met <span class="term" tabindex="0" data-term="bellwether" data-context="Het anker: de meetbare signalen die je al automatisch volgt.">bellwethers</span> is in feite een geautomatiseerd stuk Systeem 4. Je kunt dat breder maken: een agent die signalen uit de omgeving volgt, ze vergelijkt met het model van de organisatie, en bij afwijkingen een voorstel aan het bestuur doet.</p><p>Voeg daar een <span class="term" tabindex="0" data-term="algedonisch" data-context="De ontwerpkeuze voor een alarm dat niet wacht op de periodieke rapportage.">algedonisch signaal</span> aan toe: een alarm dat direct bij de eigenaar terechtkomt als een drempel hard wordt overschreden.</p></div></details></div></details><details class="sec" id="s-13"><summary><h2>Valkuilen: het als organogram tekenen, te abstract blijven, en de kritiek dat het model mensen als onderdelen behandelt.</h2><span class="pill warn">let op</span></summary><div class="body"><p>Het model is krachtig, maar wordt vaak verkeerd toegepast of te snel afgewezen.</p><details class="sub"><summary><span class="nr">13.1</span> <h3 class="sk">Toepassingsfouten</h3></summary><div class="body"><ul><li>Systeem 1 tot en met 5 tekenen als managementlagen. Het zijn functies, geen niveaus.</li><li>Stafafdelingen als Systeem 1 benoemen.</li><li>Alleen de boxen tekenen en de kanalen ertussen vergeten. Juist daar zitten de meeste problemen.</li><li>Niet kiezen op welk niveau je kijkt, waardoor de analyse door elkaar loopt.</li></ul></div></details><details class="sub"><summary><span class="nr">13.2</span> <h3 class="sk">Inhoudelijke kritiek</h3></summary><div class="body"><p>Critici zoals Michael Jackson noemden het model functionalistisch: het zou te weinig oog hebben voor conflicterende belangen, macht en politiek. Na Chili kwam ook de vraag op of het model tot centrale controle leidt.</p><p>Aanhangers wijzen erop dat het model juist autonomie centraal stelt en centrale detailsturing afwijst. Recent werk, zoals dat van Angela Espinosa (2025), beschrijft het <span class="term" tabindex="0" data-term="vsm" data-context="Het model, zoals verdedigd door aanhangers.">VSM</span> zelfs als emancipatorisch: het geeft eenheden een theoretische basis om hun vrijheid te verdedigen.</p></div></details></div></details><details class="sec" id="s-14"><summary><h2>Verder leren: begin bij een korte inleiding, lees dan Hoverstadt voor de praktijk en Beer zelf voor de diepte.</h2></summary><div class="body"><ul><li><strong>Kort (30 min):</strong> Espejo &amp; Gill, 'The <span class="term" tabindex="0" data-term="vsm" data-context="De titel van het aanbevolen inleidende artikel.">Viable System Model</span> as a Framework for Understanding Organizations'. Helder en praktisch.</li><li><strong>Praktijk:</strong> Patrick Hoverstadt, The Fractal Organization (2008). Diagnose en ziektebeelden met veel voorbeelden.</li><li><strong>Diepte:</strong> Stafford Beer, Diagnosing the System for Organizations (1985). Het werkboek van de bedenker zelf.</li></ul></div></details></main>
+<footer id="bronnen"><div class="wrap"><h3>Bronnen</h3><ul><li>Espejo, R. &amp; Gill, A. — The <span class="term" tabindex="0" data-term="vsm" data-context="De titel van de bron.">Viable System Model</span> as a Framework for Understanding Organizations. Inleidend artikel van een naaste collega van Beer; betrouwbaar.</li><li>Metaphorum — 'The <span class="term" tabindex="0" data-term="vsm" data-context="De titel van de bron.">VSM</span> in 1000 words'. Gemeenschap van <span class="term" tabindex="0" data-term="vsm" data-context="De titel van de bron.">VSM</span>-practitioners; betrouwbaar als overzicht.</li><li>SAGE Encyclopedia of Organization Theory — lemma '<span class="term" tabindex="0" data-term="vsm" data-context="De titel van de bron.">Viable System Model</span>'. Naslagwerk; betrouwbaar.</li><li>Buckl, Matthes &amp; Schweda (TU München, 2009) — A Viable System Perspective on Enterprise Architecture Management. Wetenschappelijk; betrouwbaar.</li><li>Huygh &amp; De Haes (Universiteit Antwerpen) — Using the <span class="term" tabindex="0" data-term="vsm" data-context="De titel van de bron.">Viable System Model</span> to Study IT Governance Dynamics. Wetenschappelijke casestudy.</li><li>Espinosa, A. (2025) — Revisiting the <span class="term" tabindex="0" data-term="vsm" data-context="De titel van de bron.">Viable System Model</span> as an emancipatory systems approach. Systems Research and Behavioral Science; recent wetenschappelijk.</li><li>Hoverstadt, P., via Doug Belshaw (2020) — notities bij de vijf systemen. Secundaire samenvatting; gebruikt als ondersteuning.</li></ul></div></footer>
+<div class="fold-controls"><button type="button" data-fold="open">Alles open</button><button type="button" data-fold="dicht">Alles dicht</button></div>
+<div class="wrap">
+<details class="sec" id="begrippen">
+  <summary><h2>Begrippen</h2><span class="small">alfabetisch · klik open voor uitleg</span></summary>
+  <div class="body"><div id="begrippen-lijst"></div></div>
+</details>
+</div>
+<dialog id="term-dialog" class="term-dialog" aria-label="Toelichting begrip">
+  <div class="dlg-head"><button type="button" class="dlg-close" aria-label="Sluiten">✕</button></div>
+  <div class="dlg-body"></div>
+</dialog>
+<script>
+const BEGRIPPEN = {
+ "vsm": {
+  "term": "VSM",
+  "voluit": "Viable System Model",
+  "definitie": "Model van Stafford Beer dat beschrijft welke vijf functies elke zelfstandige organisatie nodig heeft om te overleven in een veranderende omgeving.",
+  "kort": "Geen organogram, maar een functioneel model van sturing.",
+  "algemeen": "Beschreven in Brain of the Firm (1972), The Heart of Enterprise (1979) en Diagnosing the System for Organizations (1985). Toegepast van kleine teams tot landen."
+ },
+ "cybernetica": {
+  "term": "cybernetica",
+  "definitie": "De wetenschap van sturing en communicatie in systemen: machines, organismen en organisaties.",
+  "algemeen": "Grondleggers zijn onder meer Norbert Wiener en W. Ross Ashby. Beer paste het toe op management (managementcybernetica)."
+ },
+ "variteit": {
+  "term": "variëteit",
+  "definitie": "Het aantal mogelijke toestanden van een systeem: een maat voor complexiteit.",
+  "kort": "Hoe meer verschillende situaties kunnen optreden, hoe hoger de variëteit.",
+  "algemeen": "Kernbegrip uit de cybernetica. De omgeving heeft altijd meer variëteit dan een organisatie, en een organisatie meer dan haar management."
+ },
+ "wet-van-ashby": {
+  "term": "wet van Ashby",
+  "definitie": "Alleen variëteit kan variëteit beheersen: een regelaar moet minstens zoveel toestanden aankunnen als het systeem dat hij regelt.",
+  "kort": "Ook bekend als de wet van de vereiste variëteit (law of requisite variety).",
+  "algemeen": "Geformuleerd door W. Ross Ashby (1956). Het theoretische fundament onder het VSM."
+ },
+ "attenuator": {
+  "term": "attenuator",
+  "definitie": "Een filter dat variëteit vermindert, zodat een ontvanger het kan behappen.",
+  "kort": "Voorbeelden: samenvattingen, rapportages, standaardisatie, afbakening van taken.",
+  "algemeen": "Tegenhanger van de amplifier."
+ },
+ "amplifier": {
+  "term": "amplifier",
+  "definitie": "Een versterker die de variëteit van een regelaar vergroot, zodat hij meer situaties aankan.",
+  "kort": "Voorbeelden: delegatie, training, zelfsturende teams, IT-ondersteuning.",
+  "algemeen": "Tegenhanger van de attenuator."
+ },
+ "recursie": {
+  "term": "recursie",
+  "definitie": "Een structuur die zichzelf bevat: hetzelfde patroon herhaalt zich op elk niveau.",
+  "algemeen": "In het VSM: elke operationele eenheid is zelf weer een levensvatbaar systeem met dezelfde vijf functies."
+ },
+ "metasysteem": {
+  "term": "metasysteem",
+  "definitie": "De Systemen 2 tot en met 5 samen: alles wat de operatie bijeenhoudt en stuurt.",
+  "kort": "Het metasysteem doet zelf niet het primaire werk.",
+  "algemeen": "Beer: een verzameling subsystemen die voor de operationele eenheden zorgt, zodat ze samenhangen."
+ },
+ "s3-ster": {
+  "term": "Systeem 3*",
+  "definitie": "Het audit- en monitoringkanaal van Systeem 3: steekproefsgewijs direct kijken in de operatie, buiten de normale rapportagelijn om.",
+  "algemeen": "Spreek uit als 'drie-ster'. Voorbeelden: audits, interne controle, werkbezoeken."
+ },
+ "algedonisch": {
+  "term": "algedonisch signaal",
+  "definitie": "Een alarm (of beloning) dat direct naar het hoogste niveau gaat als de prestatie sterk afwijkt, zonder alle tussenlagen te doorlopen.",
+  "kort": "Van het Griekse algos (pijn) en hedos (plezier).",
+  "algemeen": "Werkt als een noodlijn: het escaleert pas als lagere niveaus het niet binnen de tijd oplossen."
+ },
+ "resource-bargain": {
+  "term": "resource bargain",
+  "definitie": "De afspraak tussen Systeem 3 en een operationele eenheid: dit zijn je middelen, dit is wat we van je verwachten.",
+  "algemeen": "Binnen die afspraak is de eenheid autonoom."
+ },
+ "cybersyn": {
+  "term": "Cybersyn",
+  "definitie": "Project in Chili (1971–1973) waarin Beer de economie van genationaliseerde bedrijven met het VSM wilde sturen, met realtime gegevens via telex.",
+  "algemeen": "Beëindigd na de staatsgreep van 1973. Het bekendste en meest besproken praktijkvoorbeeld van het VSM."
+ },
+ "bellwether": {
+  "term": "bellwether",
+  "definitie": "Een meetbare indicator die laat zien welk scenario dichterbij komt.",
+  "algemeen": "Bekend begrip (anker). Uit je eigen scenarioplanning: drivers, bellwethers en thresholds."
+ },
+ "mora": {
+  "term": "MORA",
+  "voluit": "MBO Referentiearchitectuur",
+  "definitie": "De referentiearchitectuur voor de mbo-sector: een gedeeld model van bedrijfsfuncties, processen en informatieobjecten.",
+  "algemeen": "Bekend begrip (anker). Een referentiemodel dat elke instelling op haar eigen situatie toepast."
+ },
+ "togaf": {
+  "term": "TOGAF",
+  "voluit": "The Open Group Architecture Framework",
+  "definitie": "Een raamwerk en methode (ADM) voor enterprise-architectuur.",
+  "algemeen": "Bekend begrip (anker). TOGAF beschrijft hoe je architectuur maakt; het VSM beschrijft wat een organisatie nodig heeft om te overleven."
+ },
+ "archimate": {
+  "term": "ArchiMate",
+  "definitie": "Modelleertaal voor enterprise-architectuur, met lagen, elementen en relaties.",
+  "algemeen": "Bekend begrip (anker). De compositierelatie (geheel bestaat uit delen) lijkt op de recursie in het VSM."
+ },
+ "mbo": {
+  "term": "mbo",
+  "voluit": "middelbaar beroepsonderwijs",
+  "definitie": "Het Nederlandse beroepsonderwijs na het voortgezet onderwijs.",
+  "algemeen": "Bekend begrip (anker). Gebruikt als voorbeeldorganisatie in dit document."
+ },
+ "vsmap": {
+  "term": "Value Stream Mapping",
+  "definitie": "Een lean-techniek om de stroom van waarde door een proces in kaart te brengen en verspilling te vinden.",
+  "algemeen": "Wordt ook VSM afgekort, maar heeft niets met het Viable System Model te maken."
+ },
+ "it-governance": {
+  "term": "IT-governance",
+  "definitie": "De manier waarop een organisatie besluiten over IT neemt, belegt en bewaakt.",
+  "algemeen": "Onderzoekers gebruiken het VSM als lens om IT-governance te analyseren."
+ }
+};
+</script>
+<script>
+
+(function () {
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const label = b => b.voluit ? `${esc(b.term)} <span class="voluit">(${esc(b.voluit)})</span>` : esc(b.term);
+  const toelichting = s => esc(s || "(geen toelichting opgegeven)");
+  const reduce = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* 1. Alineaverwijzing = kopjespad van de omliggende details (B2a) */
+  const BLOK = "p, li, td, th, summary, figcaption, dd, dt, blockquote";
+  function kop(d) {
+    const s = d.querySelector(":scope > summary"); if (!s) return "";
+    const t = (s.querySelector("h2, h3") || s).textContent.replace(/\s+/g, " ").trim();
+    return t.length > 60 ? t.slice(0, 57).trimEnd() + "…" : t;
+  }
+  function alineaPad(el) {
+    const delen = [];
+    for (let d = el.closest("details"); d; d = d.parentElement?.closest("details")) delen.unshift(kop(d));
+    if (delen.some(Boolean)) return delen.filter(Boolean).join(" › ");
+    if (el.closest("header")) return "Kop van het document";
+    if (el.closest("footer")) return "Bronnen";
+    return "Document";
+  }
+
+  /* 2. Voorkomens verzamelen. data-context is de enige bron van de alinea-specifieke
+        toelichting; popup en begrippen-sectie lezen allebei hieruit. */
+  const voorkomens = {};   // begrip-id → [{ el, blok, ids, pad, context }]
+  const regelVan = {};     // id van een voorkomen → id van zijn regel in de begrippen-sectie
+  let nr = 0;
+  document.querySelectorAll(".term").forEach(el => {
+    if (el.closest("#begrippen, #term-dialog, .term-tip")) return;
+    const id = el.dataset.term;
+    if (!BEGRIPPEN[id]) { console.warn("Onbekend begrip:", id, el); return; }
+    const context = (el.dataset.context || "").trim();
+    if (!context) console.warn("Ontbrekende data-context:", id, el);
+    if (!el.id) el.id = "vk-" + (++nr);
+    const blok = el.closest(BLOK) || el.parentElement;
+    const lijst = voorkomens[id] || (voorkomens[id] = []);
+    const zelfdeAlinea = lijst.filter(v => v.blok === blok);
+    const gelijk = zelfdeAlinea.find(v => v.context === context);
+    if (gelijk) { gelijk.ids.push(el.id); regelVan[el.id] = "regel-" + gelijk.el.id; return; }
+    if (zelfdeAlinea.length) console.warn("Afwijkende data-context binnen één alinea:", id, el);
+    lijst.push({ el, blok, ids: [el.id], pad: alineaPad(el), context });
+    regelVan[el.id] = "regel-" + el.id;
+  });
+  Object.keys(BEGRIPPEN).forEach(id => { if (!voorkomens[id]) console.warn("Begrip komt niet voor in de tekst:", id); });
+
+  /* 3. Begrippen-sectie renderen */
+  const renderItems = (items, depth) => (items || []).map(it =>
+    `<details class="sub laag${depth}"><summary>${esc(it.titel)}</summary><div class="body"><p>${esc(it.tekst)}</p>${renderItems(it.sub, depth + 1)}</div></details>`).join("");
+  const renderGebruik = id => {
+    const lijst = voorkomens[id] || []; if (!lijst.length) return "";
+    const totaal = lijst.reduce((n, v) => n + v.ids.length, 0);
+    return `<p><strong>Gebruik in dit document</strong> <span class="vk-n">(${totaal}×)</span></p><ul class="vk-lijst">` +
+      lijst.map(v => `<li id="regel-${v.el.id}"><a href="#${v.el.id}" class="naar-voorkomen" data-vk="${v.el.id}">${esc(v.pad)}</a>` +
+        `${v.ids.length > 1 ? ` <span class="vk-n">(${v.ids.length}× in deze alinea)</span>` : ""}: ${toelichting(v.context)}</li>`).join("") + "</ul>";
+  };
+  const host = document.getElementById("begrippen-lijst");
+  if (host) host.innerHTML = Object.entries(BEGRIPPEN)
+    .sort((a, b) => a[1].term.localeCompare(b[1].term, "nl"))
+    .map(([id, b]) => `<details class="sub begrip-item" id="begrip-${id}"><summary>${label(b)}</summary><div class="body">
+        <p><strong>Definitie:</strong> ${esc(b.definitie)}</p>${b.kort ? `<p>${esc(b.kort)}</p>` : ""}
+        <p><strong>Algemeen:</strong> ${esc(b.algemeen)}</p>${renderGebruik(id)}${renderItems(b.uitwerking, 3)}</div></details>`).join("");
+
+  /* 4. Tooltip */
+  const tip = document.createElement("div");
+  tip.className = "term-tip"; tip.setAttribute("role", "tooltip"); tip.id = "term-tip";
+  document.body.appendChild(tip);
+  let current = null, hideTimer = null;
+
+  function showTip(el) {
+    const b = BEGRIPPEN[el.dataset.term]; if (!b) return;
+    clearTimeout(hideTimer); current = el;
+    tip.innerHTML = `<strong>${label(b)}</strong><p>${esc(b.definitie)}</p>${b.kort ? `<p class="kort">${esc(b.kort)}</p>` : ""}<button type="button" class="meer-info">meer info</button>`;
+    tip.classList.add("open");
+    el.setAttribute("aria-describedby", "term-tip");
+    const r = el.getBoundingClientRect(), t = tip.getBoundingClientRect();
+    const left = Math.min(Math.max(8, r.left), innerWidth - t.width - 8);
+    let top = r.bottom + 6;
+    if (top + t.height > innerHeight - 8) top = r.top - t.height - 6;
+    tip.style.left = left + scrollX + "px"; tip.style.top = top + scrollY + "px";
+  }
+  function hideTip() { tip.classList.remove("open"); current?.removeAttribute("aria-describedby"); current = null; }
+  const hideSoon = () => { clearTimeout(hideTimer); hideTimer = setTimeout(hideTip, 250); };
+
+  document.addEventListener("mouseover", e => {
+    const el = e.target.closest(".term");
+    if (el) showTip(el); else if (e.target.closest(".term-tip")) clearTimeout(hideTimer);
+  });
+  document.addEventListener("mouseout", e => {
+    if (e.target.closest(".term, .term-tip") && !e.relatedTarget?.closest?.(".term, .term-tip")) hideSoon();
+  });
+  document.addEventListener("focusin", e => { const el = e.target.closest(".term"); if (el) showTip(el); });
+  document.addEventListener("focusout", e => { if (e.target.closest(".term") && !e.relatedTarget?.closest?.(".term-tip")) hideSoon(); });
+
+  /* 5. Popup */
+  const dlg = document.getElementById("term-dialog");
+  const body = dlg.querySelector(".dlg-body");
+  function openPopup(el) {
+    const id = el.dataset.term, b = BEGRIPPEN[id]; if (!b) return;
+    body.innerHTML = `<h3>${label(b)}</h3>
+      <h4>Definitie</h4><p>${esc(b.definitie)}</p>${b.kort ? `<p>${esc(b.kort)}</p>` : ""}
+      <h4>Algemeen</h4><p>${esc(b.algemeen)}</p>
+      <h4>In deze alinea</h4><p class="vk-pad">${esc(alineaPad(el))}</p><p>${toelichting((el.dataset.context || "").trim())}</p>
+      <p style="margin-top:1rem"><a href="#begrip-${id}" class="naar-begrip" data-id="${id}" data-vk="${el.id}">Naar de begrippensectie ↓</a></p>`;
+    hideTip(); dlg.showModal(); body.scrollTop = 0;
+  }
+
+  /* 6. Navigatie heen (popup → begrippen-sectie) en terug (begrippen-sectie → tekst) */
+  function openTot(el) { for (let d = el.closest("details"); d; d = d.parentElement?.closest("details")) d.open = true; }
+  function oplichten(...els) {
+    document.querySelectorAll(".flash").forEach(x => x.classList.remove("flash"));
+    els.filter(Boolean).forEach(x => { void x.offsetWidth; x.classList.add("flash"); });
+  }
+  function gotoBegrip(id, vk) {
+    const target = document.getElementById("begrip-" + id); if (!target) return;
+    openTot(target);
+    target.querySelector(":scope > summary")?.focus({ preventScroll: true });
+    hideTip();   /* dlg.close() gaf de focus terug aan het begrip in de tekst, wat de tooltip opende */
+    const regel = vk ? document.getElementById(regelVan[vk]) : null;
+    (regel || target).scrollIntoView({ behavior: reduce() ? "auto" : "smooth", block: regel ? "center" : "start" });
+    oplichten(target, regel);
+  }
+  function gotoVoorkomen(vk) {
+    const el = document.getElementById(vk); if (!el) return;
+    openTot(el);
+    el.focus({ preventScroll: true }); hideTip();
+    el.scrollIntoView({ behavior: reduce() ? "auto" : "smooth", block: "center" });
+    oplichten(el);
+  }
+
+  document.addEventListener("click", e => {
+    const meer = e.target.closest(".meer-info");
+    if (meer && current) { e.preventDefault(); openPopup(current); return; }
+    const naar = e.target.closest(".naar-begrip");
+    if (naar) { e.preventDefault(); dlg.close(); gotoBegrip(naar.dataset.id, naar.dataset.vk); return; }
+    const terug = e.target.closest(".naar-voorkomen");
+    if (terug) { e.preventDefault(); gotoVoorkomen(terug.dataset.vk); return; }
+    const el = e.target.closest(".term");
+    if (el) { e.preventDefault(); e.stopPropagation(); openPopup(el); return; }
+    if (!e.target.closest(".term-tip")) hideTip();
+  }, true);
+  document.addEventListener("keydown", e => {
+    const el = e.target.closest?.(".term");
+    if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openPopup(el); }
+    if (e.key === "Escape") hideTip();
+  });
+  dlg.querySelector(".dlg-close").addEventListener("click", () => dlg.close());
+  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+})();
+
+</script>
+<!-- Bewust niet als begrip opgenomen: Systeem 1 tot en met 5 (onderwerp van het document zelf, uitgelegd in de secties en het diagram), system-in-focus (in de tekst uitgelegd), oscillatie (in de tekst uitgelegd), subsidiariteit (gewoon bestuurlijk woord), organogram (gewoon woord), IV-landschap en approval flow (bekend bij de lezer, alleen terloops), Michael Jackson, Angela Espinosa en de boektitels (namen, geen vaktermen) -->
+<script>
+document.querySelectorAll(".fold-controls button").forEach(b => b.addEventListener("click", () => {
+  const open = b.dataset.fold === "open";
+  document.querySelectorAll("details").forEach(d => d.open = open);
+}));
+/* interne links (#id) openen de dichtgeklapte secties rond het doel */
+function openRond(id) {
+  const t = id && document.getElementById(id); if (!t) return;
+  for (let d = t.closest("details"); d; d = d.parentElement?.closest("details")) d.open = true;
+}
+document.addEventListener("click", e => {
+  const a = e.target.closest('a[href^="#"]');
+  if (a && !a.matches(".naar-begrip, .naar-voorkomen")) openRond(decodeURIComponent(a.getAttribute("href").slice(1)));
+});
+if (location.hash) openRond(decodeURIComponent(location.hash.slice(1)));
+</script>
+</body></html>
